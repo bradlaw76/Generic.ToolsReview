@@ -1,500 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D365 Modern Shell - Demo</title>
-    <style>
-        /* =============================================================================
-           RESET
-           ============================================================================= */
-        *,
-        *::before,
-        *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        ul, ol { list-style: none; }
-        a { text-decoration: none; color: inherit; }
-        button { font-family: inherit; cursor: pointer; }
-
-        /* =============================================================================
-           GENERIC D365 SHELL – THEME SYSTEM v1.2
-           Supports: theme-dark (Circuit), theme-light (Circuit), theme-d365 (Microsoft)
-           ============================================================================= */
-
-        /* ─── Circuit Dark ─── */
-        body.theme-dark {
-            --bg-primary: #0B0D10;
-            --bg-secondary: #12161C;
-            --bg-tertiary: #1A1F26;
-            --border-subtle: #232A33;
-            --border-strong: #2E3742;
-            --text-primary: #E6EDF3;
-            --text-secondary: #C9D1D9;
-            --text-muted: #8B949E;
-            --color-primary: #1E88E5;
-            --color-secondary: #43A047;
-            --color-accent: #00BCD4;
-            --color-danger: #E53935;
-            --color-warning: #F2C94C;
-            --color-success: #4CAF50;
-            --shadow-card: 0 8px 24px rgba(0,0,0,0.45);
-            --shadow-modal: 0 16px 48px rgba(0,0,0,0.6);
-        }
-
-        /* ─── Circuit Light ─── */
-        body.theme-light {
-            --bg-primary: #F4F7FA;
-            --bg-secondary: #FFFFFF;
-            --bg-tertiary: #E9EEF3;
-            --border-subtle: #D0D7DE;
-            --border-strong: #B6C2CF;
-            --text-primary: #0D1117;
-            --text-secondary: #30363D;
-            --text-muted: #57606A;
-            --color-primary: #1565C0;
-            --color-secondary: #2E7D32;
-            --color-accent: #00897B;
-            --color-danger: #C62828;
-            --color-warning: #D4AF37;
-            --color-success: #388E3C;
-            --shadow-card: 0 6px 18px rgba(0,0,0,0.08);
-            --shadow-modal: 0 12px 32px rgba(0,0,0,0.12);
-        }
-
-        /* ─── Dynamics 365 ─── */
-        body.theme-d365 {
-            --bg-primary: #F3F2F1;
-            --bg-secondary: #FFFFFF;
-            --bg-tertiary: #FAF9F8;
-            --border-subtle: #E1DFDD;
-            --border-strong: #C8C6C4;
-            --text-primary: #323130;
-            --text-secondary: #605E5C;
-            --text-muted: #8A8886;
-            --color-primary: #0078D4;
-            --color-primary-hover: #106EBE;
-            --color-primary-active: #005A9E;
-            --color-secondary: #107C10;
-            --color-accent: #00B7C3;
-            --color-danger: #D13438;
-            --color-warning: #FFB900;
-            --color-success: #107C10;
-            --shadow-card: 0 2px 6px rgba(0,0,0,0.08);
-            --shadow-modal: 0 8px 24px rgba(0,0,0,0.2);
-        }
-
-        /* =============================================================================
-           BASE
-           ============================================================================= */
-        body {
-            font-family: 'Segoe UI Variable', 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            height: 100vh;
-            overflow: hidden;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        /* =============================================================================
-           TOPBAR — 48px fixed header
-           ============================================================================= */
-        .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 48px;
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-subtle);
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            z-index: 1000;
-        }
-
-        .top-bar-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .top-bar-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            white-space: nowrap;
-        }
-
-        .top-bar-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            padding: 0 24px;
-        }
-
-        .top-bar-search {
-            width: 100%;
-            max-width: 400px;
-            padding: 6px 12px 6px 32px;
-            font-size: 13px;
-            font-family: inherit;
-            border: 1px solid var(--border-subtle);
-            border-radius: 4px;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            outline: none;
-            transition: border-color 150ms ease-in-out;
-        }
-
-        .top-bar-search::placeholder {
-            color: var(--text-muted);
-        }
-
-        .top-bar-search:focus {
-            border-color: var(--color-primary);
-        }
-
-        .search-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .search-wrapper svg {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 14px;
-            height: 14px;
-            color: var(--text-muted);
-            pointer-events: none;
-        }
-
-        .top-bar-right {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* =============================================================================
-           ICON BUTTON
-           ============================================================================= */
-        .icon-button {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 4px;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            transition: background-color 150ms ease-in-out;
-        }
-
-        .icon-button:hover {
-            background-color: var(--bg-tertiary);
-        }
-
-        .icon-button:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 1px;
-        }
-
-        /* =============================================================================
-           THEME SELECTOR
-           ============================================================================= */
-        .theme-selector {
-            position: relative;
-        }
-
-        .theme-dropdown {
-            position: absolute;
-            top: 40px;
-            right: 0;
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            box-shadow: var(--shadow-modal);
-            min-width: 180px;
-            z-index: 2000;
-            display: none;
-            overflow: hidden;
-        }
-
-        .theme-dropdown.open {
-            display: block;
-        }
-
-        .theme-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            padding: 10px 16px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-family: inherit;
-            cursor: pointer;
-            transition: background-color 150ms ease-in-out;
-        }
-
-        .theme-option:hover {
-            background-color: var(--bg-tertiary);
-        }
-
-        .theme-option.active {
-            color: var(--color-primary);
-            font-weight: 600;
-        }
-
-        .theme-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            border: 1px solid var(--border-subtle);
-        }
-
-        /* =============================================================================
-           SIDENAV — 240px expanded / 64px collapsed
-           ============================================================================= */
-        .side-nav {
-            position: fixed;
-            top: 48px;
-            left: 0;
-            bottom: 0;
-            background-color: var(--bg-secondary);
-            border-right: 1px solid var(--border-subtle);
-            width: 240px;
-            overflow-x: hidden;
-            overflow-y: auto;
-            transition: width 180ms ease-in-out;
-            z-index: 900;
-        }
-
-        .side-nav.collapsed {
-            width: 64px;
-        }
-
-        .side-nav::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .side-nav::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .side-nav::-webkit-scrollbar-thumb {
-            background-color: var(--border-subtle);
-            border-radius: 2px;
-        }
-
-        .nav-list {
-            padding: 4px 0;
-        }
-
-        .nav-group-label {
-            padding: 16px 16px 4px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .side-nav.collapsed .nav-group-label {
-            display: none;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            height: 36px;
-            padding: 0 16px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            background: transparent;
-            border: none;
-            width: 100%;
-            text-align: left;
-            position: relative;
-            font-family: inherit;
-            font-size: 13px;
-            transition: background-color 150ms ease-in-out;
-        }
-
-        .nav-item:hover {
-            background-color: var(--bg-tertiary);
-        }
-
-        .nav-item:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: -2px;
-        }
-
-        .nav-item.active {
-            color: var(--color-primary);
-            background-color: var(--bg-tertiary);
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background-color: var(--color-primary);
-        }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-        }
-
-        .nav-label {
-            margin-left: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .side-nav.collapsed .nav-label {
-            display: none;
-        }
-
-        .nav-divider {
-            height: 1px;
-            background-color: var(--border-subtle);
-            margin: 4px 16px;
-        }
-
-        /* =============================================================================
-           CONTENT AREA
-           ============================================================================= */
-        .content-area {
-            position: fixed;
-            top: 48px;
-            left: 240px;
-            right: 0;
-            bottom: 0;
-            background-color: var(--bg-primary);
-            padding: 24px;
-            overflow-y: auto;
-            transition: left 180ms ease-in-out;
-        }
-
-        .content-area.nav-collapsed {
-            left: 64px;
-        }
-
-        .content-area::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .content-area::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .content-area::-webkit-scrollbar-thumb {
-            background-color: var(--border-subtle);
-            border-radius: 4px;
-        }
-
-        /* =============================================================================
-           PAGE CONTENT & TRANSITIONS
-           ============================================================================= */
-        .page-content {
-            display: none;
-            flex-direction: column;
-            gap: 20px;
-            animation: pageIn 200ms ease-out;
-        }
-
-        .page-content.page-active {
-            display: flex;
-        }
-
-        @keyframes pageIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* =============================================================================
-           SECTION HEADER
-           ============================================================================= */
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-        }
-
-        .section-header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .section-subtitle {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        /* =============================================================================
-           CARDS
-           ============================================================================= */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        .card {
-            background-color: var(--bg-secondary);
-            border-radius: 6px;
-            border: 1px solid var(--border-subtle);
-            padding: 20px;
-            box-shadow: var(--shadow-card);
-        }
-
-        .card h3 {
-            color: var(--text-primary);
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .card p {
-            color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-
-        /* Stat Cards with colored left accent */
-        .stat-card {
-            border-left: 3px solid var(--stat-accent, var(--color-primary));
-        }
-
-        .stat-card .stat-value {
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generic Tools Review</title>
+  <style>
+    :root {
+      --bg: #ffffff; --text: #111; --muted: #666; --accent: #0078D4; --card: #f5f7fa; --border: #e1e4e8;
+    }
+    [data-theme="theme-dark"] { --bg:#0B0D10; --text:#E6EDF3; --muted:#8B949E; --accent:#1E88E5; --card:#12161C; --border:#232A33; }
+    [data-theme="theme-d365"] { --bg:#F3F2F1; --text:#323130; --muted:#8A8886; --accent:#0078D4; --card:#FFFFFF; --border:#E1DFDD; }
+    html, body { height:100%; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family: Segoe UI, system-ui, -apple-system, Arial, sans-serif; }
+    header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); background:var(--card); position:sticky; top:0; }
+    h1 { font-size:18px; margin:0; }
+    .theme { display:flex; gap:8px; }
+    .btn { padding:6px 10px; border:1px solid var(--border); background:transparent; color:var(--text); border-radius:6px; cursor:pointer; }
+    .btn:hover { border-color:var(--accent); }
+    main { max-width:880px; margin:24px auto; padding:0 16px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:16px; }
+    a { color:var(--accent); text-decoration:none; }
+    footer { margin:32px 0; color:var(--muted); font-size:12px; text-align:center; }
+  </style>
+  <script>
+    (function(){
+      var KEY = 'generic-d365-theme';
+      var saved = localStorage.getItem(KEY) || 'theme-light';
+      document.documentElement.setAttribute('data-theme', saved);
+      window.setTheme = function(t){ localStorage.setItem(KEY, t); document.documentElement.setAttribute('data-theme', t); };
+    })();
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Generic Tools Review</h1>
+    <div class="theme" aria-label="Theme switcher">
+      <button class="btn" onclick="setTheme('theme-light')">Light</button>
+      <button class="btn" onclick="setTheme('theme-dark')">Dark</button>
+      <button class="btn" onclick="setTheme('theme-d365')">D365</button>
+    </div>
+  </header>
+  <main>
+    <div class="card">
+      <p>Welcome — this is a minimal, self-contained page deployed via GitHub Pages.</p>
+      <p>Use the theme buttons above to switch appearance. The choice persists in localStorage using the key <code>generic-d365-theme</code>.</p>
+      <p>Project repo: <a href="https://github.com/bradlaw76/Generic.ToolsReview" target="_blank" rel="noopener">bradlaw76/Generic.ToolsReview</a></p>
+    </div>
+    <section style="margin-top:16px" class="card">
+      <h2 style="margin:0 0 8px 0; font-size:16px;">Next steps</h2>
+      <ul style="margin:0; padding-left:18px; line-height:1.7;">
+        <li>Add additional pages or assets as needed.</li>
+        <li>Mirror selected content from the main Generic site.</li>
+        <li>Keep Pages source set to <strong>main / (root)</strong>.</li>
+      </ul>
+    </section>
+  </main>
+  <footer>© Generic Tools Review</footer>
+</body>
+</html>
