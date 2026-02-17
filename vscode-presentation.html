@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VS Code Presentation — Generic Tools Review</title>
+  <style>
+    /* Theme tokens */
+    body.theme-dark { --bg-primary:#0B0D10; --bg-secondary:#12161C; --border-subtle:#232A33; --text-primary:#E6EDF3; --text-secondary:#C9D1D9; --accent:#1E88E5; }
+    body.theme-light { --bg-primary:#F4F7FA; --bg-secondary:#FFFFFF; --border-subtle:#D0D7DE; --text-primary:#0D1117; --text-secondary:#30363D; --accent:#1565C0; }
+    body.theme-d365 { --bg-primary:#F3F2F1; --bg-secondary:#FFFFFF; --border-subtle:#E1DFDD; --text-primary:#323130; --text-secondary:#605E5C; --accent:#0078D4; }
+
+    /* Base */
+    html,body{height:100%}
+    body{margin:0; background:var(--bg-primary); color:var(--text-primary); font-family: Segoe UI, system-ui, -apple-system, Arial, sans-serif;}
+    .topbar{height:48px; display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid var(--border-subtle); background:var(--bg-secondary); position:sticky; top:0}
+    .topbar a{color:var(--accent); text-decoration:none; font-weight:600}
+
+    /* Layout */
+    .pres-wrapper{display:flex; height:calc(100% - 48px)}
+    .pres-sidebar{width:220px; border-right:1px solid var(--border-subtle); background:var(--bg-secondary); padding:12px}
+    .pres-sidebar-label{font-size:12px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.6px; margin-bottom:8px}
+    .pres-chapter-btn{display:block; width:100%; text-align:left; padding:8px 10px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); border-radius:6px; margin-bottom:6px; cursor:pointer}
+    .pres-chapter-btn:hover{border-color:var(--accent)}
+    .pres-chapter-btn.active{color:var(--accent); border-color:var(--accent)}
+    .pres-stage{flex:1; position:relative;}
+    .pres-counter{position:absolute; top:10px; right:14px; font-size:12px; color:var(--text-secondary)}
+    #slides{height:100%;}
+    .pres-slide{display:none; height:100%;}
+    .pres-slide.active{display:block}
+    .pres-slide-content{max-width:920px; margin:24px auto; padding:0 16px}
+
+    /* Simple elements */
+    .pres-bullets{display:grid; gap:8px; margin-top:8px}
+    .pres-bullets li{list-style:disc; margin-left:20px; color:var(--text-secondary)}
+    .pres-grid{display:grid; gap:12px}
+    .cols-3{grid-template-columns:repeat(3,1fr)}
+    .pres-pill{border:1px solid var(--border-subtle); border-radius:8px; padding:12px}
+    .pres-quote{border-left:3px solid var(--accent); padding-left:12px; color:var(--text-secondary)}
+    .pres-workflow{display:flex; align-items:center; gap:10px}
+    .pres-wf-step{display:flex; align-items:center; gap:6px}
+    .pres-wf-circle{width:28px; height:28px; border-radius:50%; background:var(--bg-secondary); border:1px solid var(--border-subtle); display:flex; align-items:center; justify-content:center; font-size:12px}
+    .pres-arrow{color:var(--text-secondary)}
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      try {
+        var t = localStorage.getItem('generic-d365-theme') || 'theme-dark';
+        document.body.classList.remove('theme-dark','theme-light','theme-d365');
+        document.body.classList.add(t);
+      } catch(e) {}
+    });
+  </script>
+</head>
+<body class="theme-dark">
+  <div class="topbar">
+    <a href="./">← Back to Site</a>
+    <span style="color:var(--text-secondary)">VS Code Presentation</span>
+  </div>
+
+  <div class="pres-wrapper" id="deck">
+    <aside class="pres-sidebar" aria-label="Presentation chapters">
+      <div class="pres-sidebar-label">Chapters</div>
+      <button class="pres-chapter-btn" data-target="0">Overview</button>
+      <button class="pres-chapter-btn" data-target="2">Editor Setup</button>
+      <button class="pres-chapter-btn" data-target="5">Workflow</button>
+      <button class="pres-chapter-btn" data-target="8">Debugging</button>
+      <button class="pres-chapter-btn" data-target="10">Testing</button>
+      <button class="pres-chapter-btn" data-target="12">Productivity</button>
+      <button class="pres-chapter-btn" data-target="14">SpeckKit Integration</button>
+      <button class="pres-chapter-btn" data-target="17">Resources</button>
+    </aside>
+    <section class="pres-stage">
+      <div class="pres-counter"><span id="counter"></span></div>
+      <div id="slides"></div>
+    </section>
+  </div>
+  <script>
+    const slides = [
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h1>VS Code for SpeckKit</h1><p class=\"pres-subtitle\">A practical workflow using VS Code + Copilot to deliver spec-driven tools.</p><p class=\"pres-tagline\">Standalone deck.</p></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-bullets\"><li>Spec-first: docs drive implementation</li><li>Copilot assists with scaffolding</li><li>Vanilla JS for speed</li></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Editor Setup</h2><div class=\"pres-grid cols-3\"><div class=\"pres-pill\"><h4>Settings Sync</h4><p>Share config across machines.</p></div><div class=\"pres-pill\"><h4>Extensions</h4><p>Copilot, ESLint, Prettier, GitLens.</p></div><div class=\"pres-pill\"><h4>Workspace</h4><p>Trust folders; formatOnSave.</p></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-pill\"><h4>Devcontainers</h4><p>Optional for consistent environments.</p></div><div class=\"pres-pill\"><h4>Tasks</h4><p>Script serve, lint, format.</p></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Workflow</h2><div class=\"pres-workflow\"><div class=\"pres-wf-step\"><div class=\"pres-wf-circle\">Spec</div><div class=\"pres-wf-label\">Docs</div></div><div class=\"pres-arrow\">→</div><div class=\"pres-wf-step\"><div class=\"pres-wf-circle\">Scaffold</div><div class=\"pres-wf-label\">Agent</div></div><div class=\"pres-arrow\">→</div><div class=\"pres-wf-step\"><div class=\"pres-wf-circle\">Iterate</div><div class=\"pres-wf-label\">Features</div></div><div class=\"pres-arrow\">→</div><div class=\"pres-wf-step\"><div class=\"pres-wf-circle\">Verify</div><div class=\"pres-wf-label\">Serve</div></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-bullets\"><li>Small diffs with strong messages</li><li>Update CHANGELOG + versions</li></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Debugging</h2><div class=\"pres-grid\"><div class=\"pres-pill\"><h4>Breakpoints</h4><p>Step router logic.</p></div><div class=\"pres-pill\"><h4>Network</h4><p>Check tools.json, caching.</p></div></div><div class=\"pres-quote\"><p>Disable cache or add ?v=dev.</p></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-quote\"><p>“Make it testable and observable.”</p><cite>Debugging mantra</cite></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Testing</h2><div class=\"pres-bullets\"><li>Targeted checks for changed modules</li><li>Flow checks: nav, edits, uploads</li><li>Use tasks.json for repeatables</li></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-grid cols-3\"><div class=\"pres-pill\"><h4>Lint</h4><p>ESLint</p></div><div class=\"pres-pill\"><h4>Format</h4><p>Prettier</p></div><div class=\"pres-pill\"><h4>Serve</h4><p>http.server</p></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Productivity</h2><div class=\"pres-bullets\"><li>Multi-cursor & snippets</li><li>Command Palette</li><li>Quick Fixes</li></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-grid\"><div class=\"pres-pill\"><h4>Refactor</h4><p>Extract functions.</p></div><div class=\"pres-pill\"><h4>Search</h4><p>Use filters.</p></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>SpeckKit Integration</h2><div class=\"pres-bullets\"><li>Standards: headers, versions</li><li>Defaults: follow constraints</li><li>References: load when relevant</li></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><div class=\"pres-grid cols-3\"><div class=\"pres-pill\"><h3>Pitfalls</h3><p>Unbounded changes</p></div><div class=\"pres-pill\"><h3>Solutions</h3><p>Small diffs</p></div><div class=\"pres-pill\"><h3>Docs</h3><p>Keep in sync</p></div></div></div></div>`,
+      `<div class=\"pres-slide\"><div class=\"pres-slide-content\"><h2>Resources</h2><div class=\"pres-bullets\"><li>VS Code</li><li>GitHub Copilot</li><li>SpeckKit Registry</li></div></div></div>`
+    ];
+
+    const host = document.getElementById('slides');
+    host.innerHTML = slides.join('');
+    const slideEls = Array.from(host.querySelectorAll('.pres-slide'));
+    const counter = document.getElementById('counter');
+    const chapterBtns = Array.from(document.querySelectorAll('.pres-chapter-btn'));
+
+    let idx = 0;
+    function show(i){
+      idx = Math.max(0, Math.min(slideEls.length - 1, i));
+      slideEls.forEach((el, j) => el.classList.toggle('active', j === idx));
+      if(counter) counter.textContent = `${idx + 1} / ${slideEls.length}`;
+      chapterBtns.forEach((b)=> b.classList.toggle('active', parseInt(b.dataset.target,10) === idx));
+    }
+    show(0);
+    chapterBtns.forEach((btn)=> btn.addEventListener('click', ()=> show(parseInt(btn.dataset.target,10))));
+    document.addEventListener('keydown', (e)=>{ if(e.key==='ArrowRight') show(idx+1); if(e.key==='ArrowLeft') show(idx-1); });
+  </script>
+</body>
+</html>
