@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Generic Tools Review</title>
   <style>
-    :root {
-      --bg: #ffffff; --text: #111; --muted: #666; --accent: #0078D4; --card: #f5f7fa; --border: #e1e4e8;
-    }
+    :root { --bg:#ffffff; --text:#111; --muted:#666; --accent:#0078D4; --card:#f5f7fa; --border:#e1e4e8; }
     [data-theme="theme-dark"] { --bg:#0B0D10; --text:#E6EDF3; --muted:#8B949E; --accent:#1E88E5; --card:#12161C; --border:#232A33; }
     [data-theme="theme-d365"] { --bg:#F3F2F1; --text:#323130; --muted:#8A8886; --accent:#0078D4; --card:#FFFFFF; --border:#E1DFDD; }
     html, body { height:100%; }
@@ -17,7 +15,7 @@
     .theme { display:flex; gap:8px; }
     .btn { padding:6px 10px; border:1px solid var(--border); background:transparent; color:var(--text); border-radius:6px; cursor:pointer; }
     .btn:hover { border-color:var(--accent); }
-    main { max-width:880px; margin:24px auto; padding:0 16px; }
+    main { max-width:880px; margin:24px auto; padding:0 16px; display:grid; gap:16px; }
     .card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:16px; }
     a { color:var(--accent); text-decoration:none; }
     footer { margin:32px 0; color:var(--muted); font-size:12px; text-align:center; }
@@ -46,7 +44,11 @@
       <p>Use the theme buttons above to switch appearance. The choice persists in localStorage using the key <code>generic-d365-theme</code>.</p>
       <p>Project repo: <a href="https://github.com/bradlaw76/Generic.ToolsReview" target="_blank" rel="noopener">bradlaw76/Generic.ToolsReview</a></p>
     </div>
-    <section style="margin-top:16px" class="card">
+    <div class="card">
+      <h2 style="margin:0 0 8px 0; font-size:16px;">Presentation</h2>
+      <p><a href="vscode-presentation.html">Open the VS Code Presentation</a></p>
+    </div>
+    <section class="card">
       <h2 style="margin:0 0 8px 0; font-size:16px;">Next steps</h2>
       <ul style="margin:0; padding-left:18px; line-height:1.7;">
         <li>Add additional pages or assets as needed.</li>
